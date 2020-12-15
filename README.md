@@ -1,3 +1,33 @@
+[TOC]
+
+---
+
+# COMP3006
+
+This repo is mainly from [**Multi-Agent Particle Environment**](https://github.com/openai/multiagent-particle-envs).
+
+## P.S. 
+
+-   Policies can be edited in `./multiagent/policy.py`. 
+-   The test scenario for this project is defined in `./multiagent/scenarios/simple_tag.py`. 
+
+-   Installation of OpenAI gym(0.10.5) is strongly recommended. Later version does not support the codes.
+    -   Reference installation: `pip install gym==0.10.5` 
+
+
+
+## Run
+
+-   Run in terminal `python ./bin/interactive.py --scenario simple_tag.py` 
+
+
+
+
+
+---
+
+==The rest of this document is from its origin.== 
+
 **Status:** Archive (code is provided as-is, no updates expected)
 
 # Multi-Agent Particle Environment
