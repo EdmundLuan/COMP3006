@@ -38,26 +38,32 @@ class InteractivePolicy(Policy):
             # if self.move[2]: u[4] += 1.0
 
             # My test policy
-            # 坐标连线朝远处跑，但敌不动我不加速(方便观察调试，别跑出界了) 
-            dist = np.sqrt(obs[2]**2 + obs[3]**2)
+            
             if obs[8]:
                 # 追方
-                u[1] = obs[2] / dist / 1.3 #  unit acceleration
-                u[3] = obs[3] / dist / 1.3
+                # 相对位置向量+逃方绝对速度向量
+                x = obs[2] + obs[6]
+                y = obs[3] + obs[7] 
+                norm = np.sqrt(x**2+y**2)
+                u[1] = x/norm  #  unit acceleration, normalization 
+                u[3] = y/norm
                 # # 追方由键盘控制
                 # if self.move[0]: u[1] += 1.0
                 # if self.move[1]: u[2] += 1.0
                 # if self.move[3]: u[3] += 1.0
                 # if self.move[2]: u[4] += 1.0
             else: 
-                if obs[6]!=0:
-                    u[1] = -obs[2] / dist / 1 # unit acceleration
-                else: 
-                    u[1] = 0
-                if obs[7]!=0:
-                    u[3] = -obs[3] / dist / 1
-                else:
-                    u[3] = 0
+                # 逃方
+                # [x, y] --> [y, -x] 位置向量法方向 绕圈圈
+                dist = np.sqrt(obs[2]**2 + obs[3]**2)
+                #if obs[6]!=0:
+                u[1] = obs[3] / dist # unit acceleration
+                #else: 
+                #    u[1] = 0
+                #if obs[7]!=0:
+                u[3] = -obs[2] / dist
+                #else:
+                #    u[3] = 0
                 # print('obs4', obs[1])
                 # print('what is self', )
             # no movement 
