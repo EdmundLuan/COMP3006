@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.optimize as opt
 from pyglet.window import key
 
 # individual agent policy
@@ -40,10 +41,13 @@ class InteractivePolicy(Policy):
             # My test policy
             
             if obs[8]:
-                # 追方
-                # 相对位置向量+逃方绝对速度向量
-                x = obs[2] + obs[6]
-                y = obs[3] + obs[7] 
+                # Pursuer 
+                # a_p = 2//t (v_e-v_p0) + 2//t^2 p_e 
+                # Let t = 1. 
+                x = 2 * (obs[6] - obs[4] + obs[2])
+                y = 2 * (obs[7] - obs[5] + obs[3])
+                # print('v_px:', x)
+                # print('v_py:', y)
                 norm = np.sqrt(x**2+y**2)
                 u[1] = x/norm  #  unit acceleration, normalization 
                 u[3] = y/norm
@@ -53,19 +57,22 @@ class InteractivePolicy(Policy):
                 # if self.move[3]: u[3] += 1.0
                 # if self.move[2]: u[4] += 1.0
             else: 
-                # 逃方
-                # [x, y] --> [y, -x] 位置向量法方向 绕圈圈
-                dist = np.sqrt(obs[2]**2 + obs[3]**2)
-                #if obs[6]!=0:
-                u[1] = obs[3] / dist # unit acceleration
-                #else: 
-                #    u[1] = 0
-                #if obs[7]!=0:
-                u[3] = -obs[2] / dist
-                #else:
-                #    u[3] = 0
+                # Evader 
+                # 先猜一个追方的下一时刻位置，然后尽量远离那个地点，转化为一个优化问题
+                # r = lambda x: x[0]**2 + x[1]**2 
+                # con = opt.NonlinearConstraint(r, 0, 1) 
+                # t = 1
+                # ra = lambda x: ((obs[4]-obs[6])*t+0.5*x[0]*t**2+obs[2])**2 + ((obs[5]-obs[7])*t+0.5*x[1]*t**2+obs[3])**2 
+                # x0 = [0, 0]
+                # optRes = opt.minimize(ra, x0, constraints=[con],tol=1e-3)
+                # x = optRes.x[0]
+                # y = optRes.x[1]
+                x = obs[3]
+                y = -obs[2]
+                dist = np.sqrt(x**2 + y**2)
+                u[1] = x / dist # unit acceleration 
+                u[3] = y / dist 
                 # print('obs4', obs[1])
-                # print('what is self', )
             # no movement 
             if True not in self.move:
                 u[0] += 1.0

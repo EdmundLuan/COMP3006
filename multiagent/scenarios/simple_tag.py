@@ -20,7 +20,7 @@ class Scenario(BaseScenario):
             agent.adversary = True if i < num_adversaries else False
             agent.size = 0.25 if agent.adversary else 0.2
             # 加速度 enviroment.py line 188
-            agent.accel = 2 if agent.adversary else 1
+            agent.accel = 1.1 if agent.adversary else 1
             # agent.max_speed = 1.0 if agent.adversary else 1.0
             agent.initial_mass = 1.0 if agent.adversary else 1.0 # chh 10.19  质量的差别影响很大，红球总是能追上小球
 
