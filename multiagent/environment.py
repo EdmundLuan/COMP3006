@@ -202,6 +202,11 @@ class MultiAgentEnv(gym.Env):
                     # 右减左, 上减下 
                     agent.action.u[0] = action[0][1] - action[0][2]
                     agent.action.u[1] = action[0][3] - action[0][4]
+                    uLen = np.sqrt(agent.action.u[0]**2 + agent.action.u[1]**2)
+                    if not np.isnan(uLen) and uLen>0:                    
+                        agent.action.u[0] = agent.action.u[0]/uLen
+                        agent.action.u[1] = agent.action.u[1]/uLen
+
 
                     # print(('actionu',agent.action.u))
                     # print(('action1', action[0][1]))

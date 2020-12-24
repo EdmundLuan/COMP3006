@@ -44,13 +44,16 @@ class InteractivePolicy(Policy):
                 # Pursuer 
                 # a_p = 2//t (v_e-v_p0) + 2//t^2 p_e 
                 # Let t = 1. 
-                x = 2 * (obs[6] - obs[4] + obs[2])
-                y = 2 * (obs[7] - obs[5] + obs[3])
-                # print('v_px:', x)
-                # print('v_py:', y)
+                # x = 2 * (obs[6] - obs[4] + obs[2])
+                # y = 2 * (obs[7] - obs[5] + obs[3])
+                x = obs[2]
+                y = obs[3]
+                # # print('v_px:', x)
+                # # print('v_py:', y)
                 norm = np.sqrt(x**2+y**2)
                 u[1] = x/norm  #  unit acceleration, normalization 
                 u[3] = y/norm
+
                 # # 追方由键盘控制
                 # if self.move[0]: u[1] += 1.0
                 # if self.move[1]: u[2] += 1.0
@@ -67,12 +70,25 @@ class InteractivePolicy(Policy):
                 # optRes = opt.minimize(ra, x0, constraints=[con],tol=1e-3)
                 # x = optRes.x[0]
                 # y = optRes.x[1]
-                x = obs[3]
-                y = -obs[2]
+                dist = np.sqrt(obs[2]**2 + obs[3]**2)
+                if dist<2.2:
+                    x = -obs[3]
+                    y = obs[2]
+                else:
+                    x = -obs[2]
+                    y = -obs[3]
+                # x = obs[3]
+                # y = -obs[2]
                 dist = np.sqrt(x**2 + y**2)
                 u[1] = x / dist # unit acceleration 
                 u[3] = y / dist 
                 # print('obs4', obs[1])
+
+                # 逃方由键盘控制
+                # if self.move[0]: u[1] += 1.0
+                # if self.move[1]: u[2] += 1.0
+                # if self.move[3]: u[3] += 1.0
+                # if self.move[2]: u[4] += 1.0
             # no movement 
             if True not in self.move:
                 u[0] += 1.0

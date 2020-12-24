@@ -29,6 +29,10 @@ class Entity(object):
         self.movable = False
         # entity collides with others
         self.collide = True
+
+        # entity catched/got catched
+        self.catched = False
+
         # material density (affects mass)
         self.density = 25.0  # 什么意思
         # color
@@ -145,10 +149,11 @@ class World(object):
     # integrate physical state
     def integrate_state(self, p_force):
         for i, entity in enumerate(self.entities):
-            if not entity.movable: continue # 如果是运动的实体则执行循环体，否则continue
+            if not entity.movable: continue # 如果是运动的实体则执行循环体，否则continue 
             # entity.state.p_vel = entity.state.p_vel * (1 - self.damping)  # 更新agent速度：速度×（1-阻尼）
             # print('v',entity.state.p_vel)
             if (p_force[i] is not None):
+                if entity.catched: p_force[i]=0 
                 entity.state.p_vel += (p_force[i] / entity.mass - entity.state.p_vel * self.damping / entity.mass) * self.dt  # 牛二：v=v0+f/m*t 速度=力/质量×时间
                 # entity.state.p_vel += (p_force[i] / entity.mass ) * self.dt # 原论文物理模型:v=v0+f/m*t 速度=力/质量×时间
                 # print(f'p_force{i}',p_force[i])
@@ -167,6 +172,10 @@ class World(object):
         dist = np.sqrt(np.sum(np.square(delta_pos)))
         # minimum allowable distance
         dist_min = entity_a.size + entity_b.size
+        
+        # catched
+        if dist<=dist_min: entity_a.catched = entity_b.catched = True
+
         # softmax penetration
         k = self.contact_margin
         # numpy.logaddexp(x1, x2[, out])==log(exp(x1)+exp(x2)) CHH
